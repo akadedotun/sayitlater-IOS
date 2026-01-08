@@ -19,7 +19,7 @@ struct LockView: View {
                 .foregroundColor(.appSecondary)
             
             Text("Say It Later")
-                .font(.system(size: 28, weight: .light))
+                .font(.system(size: 28, weight: .semibold))
                 .foregroundColor(.appText)
             
             if let error = authenticationError {

@@ -8,6 +8,13 @@
 import SwiftUI
 
 struct SupportResourcesView: View {
+    @State private var supportContent: SupportContent
+    
+    init() {
+        let region = RegionDetectionService.detectRegion()
+        _supportContent = State(initialValue: SupportContent.content(for: region))
+    }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -17,26 +24,32 @@ struct SupportResourcesView: View {
                     .padding(.top, 40)
                 
                 VStack(alignment: .leading, spacing: 24) {
-                    SupportResourceCard(
-                        title: "Samaritans",
-                        number: "116 123",
-                        description: "Call or text 24/7",
-                        isEmergency: false
-                    )
+                    ForEach(Array(supportContent.resources.enumerated()), id: \.offset) { _, resource in
+                        SupportResourceCard(
+                            resource: resource
+                        )
+                    }
                     
-                    SupportResourceCard(
-                        title: "NHS 111",
-                        number: "111",
-                        description: "Non-emergency medical help",
-                        isEmergency: false
-                    )
-                    
-                    SupportResourceCard(
-                        title: "Emergency Services",
-                        number: "999",
-                        description: "For immediate emergencies",
-                        isEmergency: true
-                    )
+                    // Fallback message for Other region
+                    if let message = supportContent.fallbackMessage {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(message)
+                                .font(.system(size: 16, weight: .regular))
+                                .foregroundColor(.appText)
+                                .multilineTextAlignment(.leading)
+                            
+                            if let link = supportContent.fallbackLink,
+                               let linkText = supportContent.fallbackLinkText {
+                                Link(linkText, destination: URL(string: link)!)
+                                    .font(.system(size: 16, weight: .regular))
+                                    .foregroundColor(.appAccent)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(20)
+                        .background(Color(hex: "2C2C2E"))
+                        .cornerRadius(12)
+                    }
                 }
                 .padding(.horizontal, 20)
                 
@@ -48,57 +61,56 @@ struct SupportResourcesView: View {
 }
 
 struct SupportResourceCard: View {
-    let title: String
-    let number: String
-    let description: String
-    let isEmergency: Bool
+    let resource: SupportResource
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(title)
+                Text(resource.title)
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.appText)
                 
-                if isEmergency {
+                if resource.isEmergency {
                     Spacer()
                     Text("EMERGENCY")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.red)
+                        .foregroundColor(.appSecondary)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.red.opacity(0.1))
+                        .background(Color(hex: "2C2C2E"))
                         .cornerRadius(4)
                 }
             }
             
-            Button(action: {
-                // For Samaritans, also support text (SMS)
-                if title == "Samaritans" {
-                    // Try SMS first, fallback to call
-                    if let smsURL = URL(string: "sms:116123") {
-                        UIApplication.shared.open(smsURL)
-                    } else if let callURL = URL(string: "tel://116123") {
-                        UIApplication.shared.open(callURL)
-                    }
-                } else {
-                    // For others, just call
+            if let number = resource.number {
+                Button(action: {
                     let cleanNumber = number.replacingOccurrences(of: " ", with: "")
-                    if let url = URL(string: "tel://\(cleanNumber)") {
-                        UIApplication.shared.open(url)
+                    
+                    if resource.supportsSMS {
+                        // Try SMS first, fallback to call
+                        if let smsURL = URL(string: "sms:\(cleanNumber)") {
+                            UIApplication.shared.open(smsURL)
+                        } else if let callURL = URL(string: "tel://\(cleanNumber)") {
+                            UIApplication.shared.open(callURL)
+                        }
+                    } else {
+                        // Just call
+                        if let url = URL(string: "tel://\(cleanNumber)") {
+                            UIApplication.shared.open(url)
+                        }
                     }
-                }
-            }) {
-                HStack {
-                    Text(number)
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundColor(.appAccent)
-                    Image(systemName: "phone.fill")
-                        .foregroundColor(.appAccent)
+                }) {
+                    HStack {
+                        Text(number)
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(.appAccent)
+                        Image(systemName: "phone.fill")
+                            .foregroundColor(.appAccent)
+                    }
                 }
             }
             
-            Text(description)
+            Text(resource.description)
                 .font(.system(size: 14, weight: .regular))
                 .foregroundColor(.appSecondary)
         }

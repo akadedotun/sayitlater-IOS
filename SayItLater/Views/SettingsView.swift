@@ -53,22 +53,17 @@ struct SettingsView: View {
                     .listRowBackground(Color(hex: "2C2C2E"))
                     
                     Button(action: {
-                        exportEntries()
+                        // Disabled for v1
                     }) {
                         HStack {
                             Text("Export entries")
-                                .foregroundColor(.appText)
+                                .foregroundColor(.appSecondary)
                             Spacer()
-                            if isExporting {
-                                ProgressView()
-                                    .tint(.appText)
-                            } else {
-                                Image(systemName: "square.and.arrow.up")
-                                    .foregroundColor(.appSecondary)
-                            }
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundColor(.appSecondary)
                         }
                     }
-                    .disabled(isExporting)
+                    .disabled(true)
                     .listRowBackground(Color(hex: "2C2C2E"))
                     
                     NavigationLink(destination: ReflectionView()) {
