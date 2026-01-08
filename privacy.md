@@ -112,7 +112,7 @@ Because all data is stored locally on your device:
 ## Contact
 
 If you have questions about this privacy policy, please contact:
-[your-email@example.com]
+adedotunayodimeji@gmail.com
 
 ⸻
 
