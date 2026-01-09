@@ -56,24 +56,31 @@ struct WritingView: View {
                 .frame(height: 24)
             
             // Submit button
+            // FIX: Compute button state once to prevent view rebuilds on every keystroke
+            let isDraftEmpty = draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             Button(action: onDone) {
                 Text("Submit")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.appSecondary : Color.appBackground)
+                    .foregroundColor(isDraftEmpty ? Color.appSecondary : Color.appBackground)
                     .frame(maxWidth: .infinity)
                     .frame(height: 45)
-                    .background(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.gray.opacity(0.5) : Color(red: 0.892, green: 0.892, blue: 0.892))
+                    .background(isDraftEmpty ? Color.gray.opacity(0.5) : Color(red: 0.892, green: 0.892, blue: 0.892))
                     .cornerRadius(24)
             }
-            .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .disabled(isDraftEmpty)
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
         }
         .background(Color.appBackground)
         .onAppear {
-            // Keyboard open immediately
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                isFocused = true
+            // Keyboard open immediately, but only if not already focused
+            if !isFocused {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    // Only set focus if still not focused (user might have started typing)
+                    if !isFocused {
+                        isFocused = true
+                    }
+                }
             }
         }
     }

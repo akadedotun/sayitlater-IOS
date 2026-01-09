@@ -12,10 +12,6 @@ struct FeelingSelectionView: View {
     var onSelect: (FeelingResult) -> Void
     @Environment(\.dismiss) private var dismiss
     
-    @State private var heavierImage: UIImage?
-    @State private var theSameImage: UIImage?
-    @State private var lighterImage: UIImage?
-    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -30,7 +26,7 @@ struct FeelingSelectionView: View {
                 VStack(spacing: 16) {
                     FeelingOption(
                         title: "Heavier",
-                        image: heavierImage,
+                        imageName: "heavierIcon",
                         isSelected: selectedFeeling == .heavier,
                         onTap: {
                             selectedFeeling = .heavier
@@ -40,7 +36,7 @@ struct FeelingSelectionView: View {
                     
                     FeelingOption(
                         title: "The Same",
-                        image: theSameImage,
+                        imageName: "theSameIcon",
                         isSelected: selectedFeeling == .same,
                         onTap: {
                             selectedFeeling = .same
@@ -50,7 +46,7 @@ struct FeelingSelectionView: View {
                     
                     FeelingOption(
                         title: "Lighter",
-                        image: lighterImage,
+                        imageName: "lighterIcon",
                         isSelected: selectedFeeling == .lighter,
                         onTap: {
                             selectedFeeling = .lighter
@@ -64,52 +60,13 @@ struct FeelingSelectionView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.appBackground)
-            .onAppear {
-                loadImages()
-            }
         }
-    }
-    
-    private func loadImages() {
-        // Load Heavier image
-        loadImage(from: "https://res.cloudinary.com/dvsi1jmrp/image/upload/v1767802128/heavier_scq3az.png") { image in
-            heavierImage = image
-        }
-        
-        // Load The Same image
-        loadImage(from: "https://res.cloudinary.com/dvsi1jmrp/image/upload/v1767802292/thesame_my7cyh.png") { image in
-            theSameImage = image
-        }
-        
-        // Load Lighter image
-        loadImage(from: "https://res.cloudinary.com/dvsi1jmrp/image/upload/v1767802268/lighter_b8prwv.png") { image in
-            lighterImage = image
-        }
-    }
-    
-    private func loadImage(from urlString: String, completion: @escaping (UIImage?) -> Void) {
-        guard let url = URL(string: urlString) else {
-            completion(nil)
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil,
-                  let image = UIImage(data: data) else {
-                completion(nil)
-                return
-            }
-            
-            DispatchQueue.main.async {
-                completion(image)
-            }
-        }.resume()
     }
 }
 
 struct FeelingOption: View {
     let title: String
-    let image: UIImage?
+    let imageName: String
     let isSelected: Bool
     let onTap: () -> Void
     
@@ -117,17 +74,10 @@ struct FeelingOption: View {
         Button(action: onTap) {
             HStack(spacing: 16) {
                 // Icon
-                if let image = image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
-                } else {
-                    Rectangle()
-                        .fill(Color.appText.opacity(0.1))
-                        .frame(width: 60, height: 60)
-                        .cornerRadius(8)
-                }
+                Image(imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 60, height: 60)
                 
                 // Text
                 Text(title)

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct WelcomeView: View {
     @Binding var hasSeenWelcome: Bool
-    @State private var splashImage: UIImage?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -17,17 +16,10 @@ struct WelcomeView: View {
             
             VStack(spacing: 0) {
                 // Tangled line drawing icon
-                if let image = splashImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 163, height: 166)
-                } else {
-                    // Placeholder while loading
-                    Rectangle()
-                        .fill(Color.appText.opacity(0.1))
-                        .frame(width: 163, height: 166)
-                }
+                Image("splashLogo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 163, height: 166)
                 
                 // 24px spacing between image and content
                 Spacer()
@@ -88,26 +80,6 @@ struct WelcomeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.appBackground)
-        .onAppear {
-            loadSplashImage()
-        }
-    }
-    
-    private func loadSplashImage() {
-        guard let url = URL(string: "https://res.cloudinary.com/dvsi1jmrp/image/upload/v1767797856/sayitlater_ulqjtx.png") else {
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil,
-                  let image = UIImage(data: data) else {
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.splashImage = image
-            }
-        }.resume()
     }
 }
 

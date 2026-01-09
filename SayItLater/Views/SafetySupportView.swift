@@ -11,24 +11,15 @@ struct SafetySupportView: View {
     var onGetSupport: () -> Void
     var onNotRightNow: () -> Void
     
-    @State private var heavyImage: UIImage?
-    
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
             
             // Illustration
-            if let image = heavyImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 186, height: 186)
-            } else {
-                Rectangle()
-                    .fill(Color.appText.opacity(0.1))
-                    .frame(width: 372, height: 372)
-                    .cornerRadius(12)
-            }
+            Image("heavyIllustration")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 186, height: 186)
             
             VStack(spacing: 16) {
                 Text("What you wrote sounds really heavy")
@@ -70,22 +61,6 @@ struct SafetySupportView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.appBackground)
-        .onAppear {
-            loadImage()
-        }
-    }
-    
-    private func loadImage() {
-        let urlString = "https://res.cloudinary.com/dvsi1jmrp/image/upload/v1767864595/heavy_un5h3w.png"
-        guard let url = URL(string: urlString) else { return }
-        
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            guard let data = data, error == nil,
-                  let image = UIImage(data: data) else { return }
-            DispatchQueue.main.async {
-                heavyImage = image
-            }
-        }.resume()
     }
 }
 

@@ -12,7 +12,12 @@ import SwiftUI
 class AppState {
     var hasSeenWelcome: Bool {
         didSet {
-            UserDefaults.standard.set(hasSeenWelcome, forKey: "hasSeenWelcome")
+            // Capture the value explicitly to avoid closure capture issues
+            let value = hasSeenWelcome
+            // Use async to avoid blocking
+            DispatchQueue.global(qos: .utility).async {
+                UserDefaults.standard.set(value, forKey: "hasSeenWelcome")
+            }
         }
     }
     
@@ -25,6 +30,8 @@ class AppState {
     var showSafetySupport: Bool = false
     
     init() {
+        // Load UserDefaults - this is fast and needed for routing
+        // We'll always show splash first, then route based on this
         self.hasSeenWelcome = UserDefaults.standard.bool(forKey: "hasSeenWelcome")
     }
     

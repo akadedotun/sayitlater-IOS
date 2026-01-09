@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    // Initialize AppState immediately but keep it lightweight
     @State private var appState = AppState()
     @Environment(\.modelContext) private var modelContext
     @State private var showHistory = false
@@ -16,17 +17,17 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var isLocked = false
     @State private var lockEnabled = false
-    
-    private let safetyDetection = SafetyDetectionService()
+    @State private var safetyDetection: SafetyDetectionService?
     
     var body: some View {
+        // Show splash immediately - it's the first thing users should see
         Group {
-            if isLocked {
+            if appState.showSplash {
+                SplashView(showSplash: $appState.showSplash)
+            } else if isLocked {
                 LockView(onUnlock: {
                     isLocked = false
                 })
-            } else if appState.showSplash {
-                SplashView(showSplash: $appState.showSplash)
             } else if !appState.hasSeenWelcome {
                 WelcomeView(hasSeenWelcome: $appState.hasSeenWelcome)
             } else if appState.showSafetySupport {
@@ -77,12 +78,15 @@ struct ContentView: View {
                         }
                     }
                     .sheet(isPresented: $appState.showFeelingSelection) {
-                        FeelingSelectionView(selectedFeeling: $appState.selectedFeeling) { feeling in
-                            appState.selectedFeeling = feeling
-                            
-                            // Check for safety issues
-                            let hasSafetyIssue = safetyDetection.detectSafetyIssues(in: appState.currentDraft)
-                            appState.detectedSafetyIssue = hasSafetyIssue
+                            FeelingSelectionView(selectedFeeling: $appState.selectedFeeling) { feeling in
+                                appState.selectedFeeling = feeling
+                                
+                                // Check for safety issues (lazy init)
+                                if safetyDetection == nil {
+                                    safetyDetection = SafetyDetectionService()
+                                }
+                                let hasSafetyIssue = safetyDetection?.detectSafetyIssues(in: appState.currentDraft) ?? false
+                                appState.detectedSafetyIssue = hasSafetyIssue
                             
                             // Dismiss feeling selection and show next screen
                             appState.showFeelingSelection = false
@@ -99,26 +103,45 @@ struct ContentView: View {
                         .presentationDetents([.medium])
                         .interactiveDismissDisabled(false)
                     }
-                    .sheet(isPresented: $appState.showPostWritingActions) {
+                    .sheet(isPresented: $appState.showPostWritingActions, onDismiss: {
+                        // Ensure draft is cleared when PostWritingActions is dismissed
+                        if appState.currentDraft.isEmpty == false {
+                            appState.currentDraft = ""
+                        }
+                    }) {
                         PostWritingActionsView(
                             onKeepForLater: {
                                 saveEntry()
+                                // Clear draft first, before resetting
+                                appState.currentDraft = ""
                                 appState.resetWritingFlow()
-                                showHistory = true
+                                // Dismiss the sheet first, then show history
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    showHistory = true
+                                }
                             },
                             onLetGo: {
-                                // Delete permanently - just reset
+                                // Delete permanently - just reset and clear
+                                appState.currentDraft = ""
                                 appState.resetWritingFlow()
                             },
                             onClose: {
+                                // Just reset, keep draft (user might want to continue)
                                 appState.resetWritingFlow()
                             }
                         )
                         .presentationDetents([.height(320)])
                         .interactiveDismissDisabled(false)
                     }
-                    .sheet(isPresented: $showHistory) {
+                    .sheet(isPresented: $showHistory, onDismiss: {
+                        // Ensure draft is cleared when history is dismissed
+                        appState.currentDraft = ""
+                    }) {
                         HistoryView()
+                            .onAppear {
+                                // Ensure draft is cleared when history appears
+                                appState.currentDraft = ""
+                            }
                     }
                     .sheet(isPresented: $showSettings) {
                         SettingsView()
@@ -126,9 +149,15 @@ struct ContentView: View {
                 }
             }
         }
-        .onAppear {
-            lockEnabled = AuthenticationService.shared.isLockEnabled
-            checkLockStatus()
+        .onChange(of: appState.showSplash) { _, newValue in
+            // Initialize when splash is dismissed
+            if !newValue {
+                // Check lock status after splash
+                lockEnabled = AuthenticationService.shared.isLockEnabled
+                if lockEnabled {
+                    checkLockStatus()
+                }
+            }
         }
         .onChange(of: lockEnabled) { _, newValue in
             if newValue {

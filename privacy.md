@@ -4,124 +4,113 @@
 
 ## Introduction
 
-Say It Later is a privacy-first iOS application that provides a private space for writing thoughts you are not ready to say out loud. This privacy policy explains how data is handled when you use the app.
+Say It Later is a privacy-first iOS application designed to give you a private space to write thoughts you are not ready to say out loud. Your privacy is fundamental to how the app is built and how it works.
 
 ⸻
 
-## Core privacy principles
+## Core Privacy Principles
 
-**Everything you write stays on your device.**
-
-Say It Later does not collect, store, or transmit your personal data to our servers.
+- Everything stays on your device
+- No accounts, no servers, no tracking
+- No data leaves your phone
 
 ⸻
 
-## Data collection
+## Data Collection
 
-### What we do not collect
-- No accounts or registration
+### What We Do Not Collect
+
+Say It Later does not collect, transmit, or store any personal data.
+
+Specifically:
+- No account or sign-up information
 - No names, email addresses, or identifiers
 - No analytics or usage tracking
-- No behavioural profiling
-- No stored location data
+- No location data
+- No advertising identifiers
+- No third-party SDKs
 
-The app may detect your device's region locally to show relevant support resources. This detection happens entirely on your device and is not stored or transmitted.
+The app does not connect to any external servers.
 
 ⸻
 
-## Local data storage
+## Data Stored on Your Device
 
-All user-created content is stored exclusively on your device using Apple system frameworks.
+All data is stored locally on your device using Apple's native frameworks.
 
 This includes:
-- Text entries you write
-- Entry metadata such as date, reflection selection, and safety flags
+- Your written entries
+- Entry metadata such as date and selected feelings
+- Safety flags used only for on-device support prompts
 - App preferences, including Face ID or passcode lock settings
 
-Authentication preferences are stored securely using Apple's Keychain.
-
-⸻
-
-## External services
-
-### Static images
-The app loads a small number of static images (currently four) from Cloudinary.
-These images are used only for visual presentation.
-- No user-generated content is uploaded
-- No personal data is transmitted
-- No tracking or analytics are enabled
-
-Cloudinary may process basic technical information (such as IP address) in accordance with its own privacy policy when images are loaded.
-
-⸻
-
-### Support resources
-The app may provide links to external support resources. When opened, these links are handled by your browser and governed by the privacy policies of those services.
-
-⸻
-
-## Data sharing
-
-Say It Later does not sell, rent, or share your data with third parties.
-
-Your written content never leaves your device.
+No data is synced, uploaded, or backed up outside your device.
 
 ⸻
 
 ## Security
-- All local data is protected using iOS's built-in encryption
-- Face ID and passcode authentication are handled entirely by Apple's LocalAuthentication framework
-- The app does not access or store biometric data
+
+- **Local encryption**: Data is protected using iOS system-level encryption
+- **Face ID / Passcode**: If enabled, authentication is handled entirely by Apple's LocalAuthentication framework
+- **Keychain**: Lock preferences are stored securely in the iOS Keychain
+
+Say It Later never accesses or stores biometric data.
 
 ⸻
 
-## Support and safety information
+## Support Resources
 
-The app may display region-appropriate support resources based on your device's locale. This process:
-- happens locally
-- is not stored
-- is not transmitted
+If certain content suggests distress, the app may show support resources.
 
-It is used only to present relevant information.
+**Region detection:**
+- Happens locally on your device
+- Is not stored or transmitted
+- Is used only to display relevant support information
 
-⸻
-
-## Children's privacy
-
-Say It Later is not intended for children or minors.
-
-The app does not knowingly collect information from children.
+Opening support links will take you to external websites that are not controlled by Say It Later.
 
 ⸻
 
-## Changes to this policy
+## Children's Privacy
 
-This policy may be updated from time to time. Any changes will be reflected by updating the "Last updated" date above.
+Say It Later is not intended for children under the age of 13. The app does not knowingly collect information from children.
 
 ⸻
 
-## Your rights
+## Your Rights
 
-Because all data is stored locally on your device:
-- You can access your content directly in the app
-- You can delete entries at any time
-- Uninstalling the app removes all stored data
+Because all data is stored locally:
+- **Access**: You can view everything directly in the app
+- **Deletion**: You can delete entries at any time
+- **Uninstall**: Removing the app deletes all stored data
+- **Export**: Export features may be added in future versions
+
+⸻
+
+## Changes to This Policy
+
+If this privacy policy changes, the "Last updated" date will be revised. No silent changes.
 
 ⸻
 
 ## Contact
 
-If you have questions about this privacy policy, please contact:
-adedotunayodimeji@gmail.com
+If you have questions about privacy or how the app works, you can reach us through the app's support contact.
 
 ⸻
 
 ## Compliance
 
-Say It Later is designed to respect applicable privacy regulations, including GDPR and CCPA.
+Say It Later is designed to comply with:
+- GDPR
+- CCPA
+- Apple App Store Review Guidelines
 
-Because the app does not collect or transmit personal data, no personal data processing occurs outside your device.
+Because no personal data is collected or transmitted, user privacy rights are inherently respected.
 
 ⸻
 
-**Reminder: Everything you write stays on your device. Nothing is tracked. Nothing is shared.**
+**In short:**
+Everything you write stays on your device.
+Nothing is tracked.
+Nothing is shared.
